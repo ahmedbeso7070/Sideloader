@@ -14,9 +14,6 @@ jobs:
           - triple: 'x86_64-linux-gnu'
             target: 'linux'
 
-          - triple: 'aarch64-linux-gnu'
-            target: 'linux'
-
         # Doesn't work, gtk_d doesn't support those platforms.
         # - triple: 'x86_64-windows-msvc'
         #   target: 'windows'
