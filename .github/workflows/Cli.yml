@@ -33,16 +33,21 @@ jobs:
       - name: Write version file
         uses: ./.github/actions/write-version-file
 
-      - name: Upgrade DUB packages
-        run: dub upgrade
-
       - name: Build
-        run: dub build -b release --compiler=ldc2 --arch ${{ matrix.triple }} --force :cli-frontend
+        run: dub build -b release --compiler=ldc2 --arch ${{ matrix.triple }} :cli-frontend
 
       - name: Move files around for artifcation
         uses: ./.github/actions/rename-files
         with:
           build-tag: cli-${{ matrix.triple }}
+
+      - name: Apply Permanent Color Fix
+        run: |
+          cd ${{github.workspace}}/bin/
+          mv sideloader-cli-${{ matrix.triple }} .sideloader-binary
+          echo '#!/bin/bash' > sideloader-cli-${{ matrix.triple }}
+          echo 'exec env NO_COLOR=1 "$(dirname "$0")"/.sideloader-binary "$@"' >> sideloader-cli-${{ matrix.triple }}
+          chmod +x sideloader-cli-${{ matrix.triple }}
 
       - uses: actions/upload-artifact@v4
         with:
