@@ -44,10 +44,15 @@ jobs:
       - name: Apply Permanent Color Fix
         run: |
           cd ${{github.workspace}}/bin/
-          mv sideloader-cli-${{ matrix.triple }} .sideloader-binary
-          echo '#!/bin/bash' > sideloader-cli-${{ matrix.triple }}
-          echo 'exec env NO_COLOR=1 "$(dirname "$0")"/.sideloader-binary "$@"' >> sideloader-cli-${{ matrix.triple }}
-          chmod +x sideloader-cli-${{ matrix.triple }}
+          if [ -f "sideloader-cli-${{ matrix.triple }}" ]; then
+            mv sideloader-cli-${{ matrix.triple }} .sideloader-binary
+            echo '#!/bin/bash' > sideloader-cli-${{ matrix.triple }}
+            echo 'exec env NO_COLOR=1 "$(dirname "$0")"/.sideloader-binary "$@"' >> sideloader-cli-${{ matrix.triple }}
+            chmod +x sideloader-cli-${{ matrix.triple }}
+          else
+            echo "Binary file not found in the expected location, checking contents:"
+            ls -la
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
