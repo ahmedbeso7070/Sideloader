@@ -16,10 +16,9 @@ jobs:
 
     name: Build CLI for ${{ matrix.triple }}
 
-    # تم التحديث إلى ubuntu-24.04 لتوفر إصدار GLIBC 2.38 المتوافق مع نظامك
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4 # تحديث لـ v4 لضمان الأداء والأمان
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -34,8 +33,11 @@ jobs:
       - name: Write version file
         uses: ./.github/actions/write-version-file
 
+      - name: Upgrade DUB packages
+        run: dub upgrade
+
       - name: Build
-        run: dub build -b release-debug --compiler=ldc2 --arch ${{ matrix.triple }} :cli-frontend
+        run: dub build -b release --compiler=ldc2 --arch ${{ matrix.triple }} --force :cli-frontend
 
       - name: Move files around for artifcation
         uses: ./.github/actions/rename-files
